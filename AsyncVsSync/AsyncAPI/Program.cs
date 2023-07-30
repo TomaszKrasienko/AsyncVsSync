@@ -16,25 +16,16 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapGet("/", async () =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+var dbConnector = new DbConnector();
+var apiConnector = new ApiConnector();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+var dbResult = await dbConnector.GetAsync();
+var apiResult = await apiConnector.GetAsync();
+
+return dbResult.Value + apiResult.Value;
+});
 
 app.Run();
 
@@ -43,3 +34,25 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
 
+class DbConnector
+{
+    public async Task<Result> GetAsync()
+    {
+        await Task.Delay(500);
+        return new Result { Value = 12 };
+    }
+}
+
+class ApiConnector
+{
+    public async Task<Result> GetAsync()
+    {
+        await Task.Delay(500);
+        return new() { Value = 13 };
+    }
+}
+
+class Result
+{
+    public int Value { get; set; }
+}
