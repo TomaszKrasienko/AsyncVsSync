@@ -14,7 +14,7 @@ public class AsyncApiTests
     [Fact]
     public void Get_PerformanceTests()
     {
-        const string url = "http://localhost:5267";
+        const string url = "http://localhost:5230";
         var getSyncApiStep = Step.Create("get", HttpClientFactory.Create(), async context =>
         {
             try
@@ -35,6 +35,7 @@ public class AsyncApiTests
         var stats = NBomberRunner
             .RegisterScenarios(scenario)
             .Run();
+        
         
     }
 }
